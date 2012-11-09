@@ -48,6 +48,7 @@ public:
     unsigned int rowCount(void) const;
     unsigned int columnCount(void) const;
     std::vector<const std::string> getHeader(void) const;
+    const std::string getHeader(unsigned int pos) const;
 
 protected:
 	void parseHeader(void);

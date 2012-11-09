@@ -37,6 +37,8 @@ int main(int argc, char **argv)
 
         std::cout << file.rowCount() << std::endl; // display : 2
         std::cout << file.columnCount() << std::endl; // display : 3
+
+        std::cout << file.getHeader(2) << std::endl; // display : Model
     }
     catch (CSVError &e)
     {

@@ -101,6 +101,13 @@ std::vector<const std::string> CSVparser::getHeader(void) const
     return _header;
 }
 
+const std::string CSVparser::getHeader(unsigned int pos) const
+{
+    if (pos >= _header.size())
+      throw CSVError("can't return this header (doesn't exist)");
+    return _header[pos];
+}
+
 /*
 ** ROW
 */
