@@ -1,7 +1,6 @@
 CSVparser
 =========
 
-C++ parser for CSV file format
 CSVparser intends to be a simple C++ parser for the CSV file format.
 
 What is a CSV file ?
