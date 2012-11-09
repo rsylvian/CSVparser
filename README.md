@@ -28,7 +28,7 @@ int main(int argc, char **argv)
 {
 	try
     {
-        CSVparser file = CSVparser("files/simple.csv");
+        CSVparser file = CSVparser("files/readme.csv");
 
         std::cout << file[0][0] << std::endl; // display : 1997
         std::cout << file[0] << std::endl; // display : 1997 | Ford | E350
