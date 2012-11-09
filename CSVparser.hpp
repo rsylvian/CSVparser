@@ -25,7 +25,6 @@ class CSVrow
 
 	public:
         void push(const std::string &);
-        unsigned int columnCount(void) const;
 
 	private:
 		const std::vector<const std::string> _header;
@@ -47,6 +46,7 @@ public:
 public:
     CSVrow &getRow(unsigned int row) const;
     unsigned int rowCount(void) const;
+    unsigned int columnCount(void) const;
     std::vector<const std::string> getHeader(void) const;
 
 protected:

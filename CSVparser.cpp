@@ -91,6 +91,11 @@ unsigned int CSVparser::rowCount(void) const
     return _content.size();
 }
 
+unsigned int CSVparser::columnCount(void) const
+{
+    return _header.size();
+}
+
 std::vector<const std::string> CSVparser::getHeader(void) const
 {
     return _header;
@@ -108,11 +113,6 @@ CSVrow::~CSVrow(void) {}
 void CSVrow::push(const std::string &value)
 {
     _values.push_back(value);
-}
-
-unsigned int CSVrow::columnCount(void) const
-{
-    return _values.size();
 }
 
 const std::string CSVrow::operator[](unsigned int valuePosition) const
