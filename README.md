@@ -2,6 +2,7 @@ CSVparser
 =========
 
 C++ parser for CSV file format
+CSVparser intends to be a simple C++ parser for the CSV file format.
 
 What is a CSV file ?
 --------------------
@@ -11,7 +12,7 @@ CSV is a common, relatively simple file format that is widely supported by consu
 Usage
 -----
 
-The following example shows how to make a simple usage of CSVparser:
+The following example shows how to make a simple usage of CSVparser.<br />
 Assuming a common CSV file :
 
 ```
