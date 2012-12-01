@@ -1,5 +1,5 @@
-#ifndef CSVPARSER_HPP
-# define CSVPARSER_HPP
+#ifndef     _CSVPARSER_HPP_
+# define    _CSVPARSER_HPP_
 
 # include <stdexcept>
 # include <string>
@@ -7,61 +7,73 @@
 # include <list>
 # include <iostream>
 
-class CSVError : public std::runtime_error
+namespace csv
 {
-
-  public:
-    CSVError(const std::string &msg):
-      std::runtime_error(std::string("CSVparser : ").append(msg))
+    class Error : public std::runtime_error
     {
-    }
-};
 
-class CSVrow
-{
-	public:
-	    CSVrow(const std::vector<const std::string> &);
-	    ~CSVrow(void);
+      public:
+        Error(const std::string &msg):
+          std::runtime_error(std::string("CSVparser : ").append(msg))
+        {
+        }
+    };
 
-	public:
-        void push(const std::string &);
+    class Row
+    {
+    	public:
+    	    Row(const std::vector<std::string> &);
+    	    ~Row(void);
 
-	private:
-		const std::vector<const std::string> _header;
-		std::vector<const std::string> _values;
+    	public:
+            int size(void) const;
+            void push(const std::string &);
+            bool set(const std::string &, const std::string &); 
+
+    	private:
+    		const std::vector<std::string> _header;
+    		std::vector<std::string> _values;
+
+        public:
+            const std::string operator[](unsigned int) const;
+            const std::string operator[](const std::string &valueName) const;
+            friend std::ostream& operator<<(std::ostream& os, const Row &row);
+            friend std::ofstream& operator<<(std::ofstream& os, const Row &row);
+    };
+
+    class Parser
+    {
 
     public:
-        const std::string operator[](unsigned int) const;
-        const std::string operator[](const std::string &valueName) const;
-        friend std::ostream& operator<<(std::ostream& os, const CSVrow &row);
-};
+        Parser(const std::string &, char sep = ',');
+        ~Parser(void);
 
-class CSVparser
-{
+    public:
+        Row &getRow(unsigned int row) const;
+        unsigned int rowCount(void) const;
+        unsigned int columnCount(void) const;
+        std::vector<std::string> getHeader(void) const;
+        const std::string getHeaderElement(unsigned int pos) const;
 
-public:
-    CSVparser(const std::string &, char sep = ',');
-    ~CSVparser(void);
+    public:
+        bool deleteRow(unsigned int row);
+        bool addRow(unsigned int pos, const std::vector<std::string> &);
+        void sync(void) const;
 
-public:
-    CSVrow &getRow(unsigned int row) const;
-    unsigned int rowCount(void) const;
-    unsigned int columnCount(void) const;
-    std::vector<const std::string> getHeader(void) const;
-    const std::string getHeader(unsigned int pos) const;
+    protected:
+    	void parseHeader(void);
+    	void parseContent(void);
 
-protected:
-	void parseHeader(void);
-	void parseContent(void);
+    private:
+        const std::string _file;
+        const char _sep;
+        std::vector<std::string> _originalFile;
+        std::vector<std::string> _header;
+        std::vector<Row *> _content;
 
-private:
-    const char _sep;
-    std::vector<const std::string> _originalFile;
-    std::vector<const std::string> _header;
-    std::vector<CSVrow *> _content;
+    public:
+        Row &operator[](unsigned int row) const;
+    };
+}
 
-public:
-    CSVrow &operator[](unsigned int row) const;
-};
-
-#endif // CSVPARSER_HPP
+#endif /*!_CSVPARSER_HPP_*/

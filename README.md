@@ -8,6 +8,13 @@ What is a CSV file ?
 
 CSV is a common, relatively simple file format that is widely supported by consumer, business, and scientific applications. Among its most common uses is moving tabular data between programs that natively operate on incompatible (often proprietary and/or undocumented) formats. This works because so many programs support some variation of CSV at least as an alternative import/export format.
 
+Compilation
+-----------
+
+```bash
+g++ CSVparser.cpp -std=c++0x
+```
+
 Usage
 -----
 
@@ -28,7 +35,7 @@ int main(int argc, char **argv)
 {
 	try
     {
-        CSVparser file = CSVparser("files/readme.csv");
+        csv::Parser file = csv::Parser("files/readme.csv");
 
         std::cout << file[0][0] << std::endl; // display : 1997
         std::cout << file[0] << std::endl; // display : 1997 | Ford | E350
@@ -38,9 +45,9 @@ int main(int argc, char **argv)
         std::cout << file.rowCount() << std::endl; // display : 2
         std::cout << file.columnCount() << std::endl; // display : 3
 
-        std::cout << file.getHeader(2) << std::endl; // display : Model
+        std::cout << file.getHeaderElement(2) << std::endl; // display : Model
     }
-    catch (CSVError &e)
+    catch (csv::Error &e)
     {
         std::cerr << e.what() << std::endl;
     }

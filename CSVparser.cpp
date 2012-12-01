@@ -3,151 +3,243 @@
 #include <iomanip>
 #include "CSVparser.hpp"
 
-CSVparser::CSVparser(const std::string &file, char sep)
-    : _sep(sep)
-{
-    std::ifstream ifile(file);
-    std::string line;
+namespace csv {
 
-    if (ifile.is_open())
+  Parser::Parser(const std::string &file, char sep)
+      : _file(file), _sep(sep)
+  {
+      std::ifstream ifile(file.c_str());
+      std::string line;
+
+      if (ifile.is_open())
+      {
+          while (ifile.good())
+          {
+              getline(ifile, line);
+              if (line != "")
+                  _originalFile.push_back(line);
+          }
+          ifile.close();
+
+          if (_originalFile.size() == 0)
+            throw Error(std::string("No Data in ").append(file));
+          
+          parseHeader();
+          parseContent();
+      }
+      else
+          throw Error(std::string("Failed to open ").append(file));
+  }
+
+  Parser::~Parser(void)
+  {
+     std::vector<Row *>::iterator it;
+
+     for (it = _content.begin(); it != _content.end(); it++)
+          delete *it;
+  }
+
+  void Parser::parseHeader(void)
+  {
+      std::stringstream ss(_originalFile[0]);
+      std::string item;
+
+      while (std::getline(ss, item, _sep))
+          _header.push_back(item);
+  }
+
+  void Parser::parseContent(void)
+  {
+     std::vector<std::string>::iterator it;
+     
+     it = _originalFile.begin();
+     it++; // skip header
+
+     for (; it != _originalFile.end(); it++)
+     {
+         bool quoted = false;
+         int tokenStart = 0;
+         int i = 0;
+
+         Row *row = new Row(_header);
+
+         for (; i != it->length(); i++)
+         {
+              if (it->at(i) == '"')
+                  quoted = ((quoted) ? (false) : (true));
+              else if (it->at(i) == ',' && !quoted)
+              {
+                  row->push(it->substr(tokenStart, i - tokenStart));
+                  tokenStart = i + 1;
+              }
+         }
+
+         //end
+         row->push(it->substr(tokenStart, it->length() - tokenStart));
+
+         // if value(s) missing
+         if (row->size() != _header.size())
+          throw Error("corrupted data !");
+         _content.push_back(row);
+     }
+  }
+
+  Row &Parser::getRow(unsigned int rowPosition) const
+  {
+      if (rowPosition >= 0 && rowPosition < _content.size())
+          return *(_content[rowPosition]);
+      throw Error("can't return this row (doesn't exist)");
+  }
+
+  Row &Parser::operator[](unsigned int rowPosition) const
+  {
+      return Parser::getRow(rowPosition);
+  }
+
+  unsigned int Parser::rowCount(void) const
+  {
+      return _content.size();
+  }
+
+  unsigned int Parser::columnCount(void) const
+  {
+      return _header.size();
+  }
+
+  std::vector<std::string> Parser::getHeader(void) const
+  {
+      return _header;
+  }
+
+  const std::string Parser::getHeaderElement(unsigned int pos) const
+  {
+      if (pos >= _header.size())
+        throw Error("can't return this header (doesn't exist)");
+      return _header[pos];
+  }
+
+  bool Parser::deleteRow(unsigned int pos)
+  {
+    if (pos >= 0 && pos < _content.size())
     {
-        while (ifile.good())
-        {
-            getline(ifile, line);
-            if (line != "")
-                _originalFile.push_back(line);
-        }
-        ifile.close();
-        parseHeader();
-        parseContent();
+      delete *(_content.begin() + pos);
+      _content.erase(_content.begin() + pos);
+      return true;
     }
-    else
-        throw CSVError(std::string("Failed to open ").append(file));
-}
+    return false;
+  }
 
-CSVparser::~CSVparser(void)
-{
-   std::vector<CSVrow *>::iterator it;
+  bool Parser::addRow(unsigned int pos, const std::vector<std::string> &r)
+  {
+    Row *row = new Row(_header);
 
-   for (it = _content.begin(); it != _content.end(); it++)
-        delete *it;
-}
+    for (auto it = r.begin(); it != r.end(); it++)
+      row->push(*it);
+    
+    if (pos >= 0 && pos <= _content.size())
+    {
+      _content.insert(_content.begin() + pos, row);
+      return true;
+    }
+    return false;
+  }
 
-void CSVparser::parseHeader(void)
-{
-    std::stringstream ss(_originalFile[0]);
-    std::string item;
+  void Parser::sync(void) const
+  {
+    std::ofstream f;
+     f.open(_file, std::ios::out | std::ios::trunc);
 
-    while (std::getline(ss, item, _sep))
-        _header.push_back(item);
-}
-
-void CSVparser::parseContent(void)
-{
-   std::vector<const std::string>::iterator it;
+    // header
+    int i = 0;
+    for (auto it = _header.begin(); it != _header.end(); it++)
+    {
+      f << *it;
+      if (i < _header.size() - 1)
+        f << ",";
+      else
+        f << std::endl;
+      i++;
+    }
    
-   it = _originalFile.begin();
-   it++; // skip header
+    for (auto it = _content.begin(); it != _content.end(); it++)
+      f << **it << std::endl;
+    f.close();
+  }
+  
+  /*
+  ** ROW
+  */
 
-   for (; it != _originalFile.end(); it++)
-   {
-       bool quoted = false;
-       int tokenStart = 0;
-       int i = 0;
-       
-       CSVrow *row = new CSVrow(_header);
+  Row::Row(const std::vector<std::string> &header)
+      : _header(header) {}
 
-       for (; i != it->length(); i++)
-       {
-            if (it->at(i) == '"')
-                quoted = ((quoted) ? (false) : (true));
-            else if (it->at(i) == ',' && !quoted)
-            {
-                row->push(it->substr(tokenStart, i - tokenStart));
-                tokenStart = i + 1;
-            }
-       }
+  Row::~Row(void) {}
 
-       //end
-       row->push(it->substr(tokenStart, it->length() - tokenStart));
-       _content.push_back(row);
-   }
-}
+  int Row::size(void) const
+  {
+    return _values.size();
+  }
 
-CSVrow &CSVparser::getRow(unsigned int rowPosition) const
-{
-    if (rowPosition >= 0 && rowPosition < _content.size())
-        return *(_content[rowPosition]);
-    throw CSVError("can't return this row (doesn't exist)");
-}
-
-CSVrow &CSVparser::operator[](unsigned int rowPosition) const
-{
-    return CSVparser::getRow(rowPosition);
-}
-
-unsigned int CSVparser::rowCount(void) const
-{
-    return _content.size();
-}
-
-unsigned int CSVparser::columnCount(void) const
-{
-    return _header.size();
-}
-
-std::vector<const std::string> CSVparser::getHeader(void) const
-{
-    return _header;
-}
-
-const std::string CSVparser::getHeader(unsigned int pos) const
-{
-    if (pos >= _header.size())
-      throw CSVError("can't return this header (doesn't exist)");
-    return _header[pos];
-}
-
-/*
-** ROW
-*/
-
-CSVrow::CSVrow(const std::vector<const std::string> &header)
-    : _header(header) {}
-
-CSVrow::~CSVrow(void) {}
-
-void CSVrow::push(const std::string &value)
-{
+  void Row::push(const std::string &value)
+  {
     _values.push_back(value);
-}
+  }
 
-const std::string CSVrow::operator[](unsigned int valuePosition) const
-{
-     if (valuePosition >= 0 && valuePosition < _values.size())
-         return _values[valuePosition];
-     throw CSVError("can't return this value (doesn't exist)");
-}
-
-const std::string CSVrow::operator[](const std::string &valueName) const
-{
-    std::vector<const std::string>::const_iterator it;
+  bool Row::set(const std::string &key, const std::string &value) 
+  {
+    std::vector<std::string>::const_iterator it;
     int pos = 0;
 
     for (it = _header.begin(); it != _header.end(); it++)
     {
-        if (valueName == *it)
-            return _values[pos];
+        if (key == *it)
+        {
+          _values[pos] = value;
+          return true;
+        }
         pos++;
     }
-    
-    throw CSVError("can't return this value (doesn't exist)");
-}
+    return false;
+  }
 
-std::ostream &operator<<(std::ostream &os, const CSVrow &row)
-{
+  const std::string Row::operator[](unsigned int valuePosition) const
+  {
+       if (valuePosition >= 0 && valuePosition < _values.size())
+           return _values[valuePosition];
+       throw Error("can't return this value (doesn't exist)");
+  }
+
+  const std::string Row::operator[](const std::string &key) const
+  {
+      std::vector<std::string>::const_iterator it;
+      int pos = 0;
+
+      for (it = _header.begin(); it != _header.end(); it++)
+      {
+          if (key == *it)
+              return _values[pos];
+          pos++;
+      }
+      
+      throw Error("can't return this value (doesn't exist)");
+  }
+
+  std::ostream &operator<<(std::ostream &os, const Row &row)
+  {
+      for (int i = 0; i != row._values.size(); i++)
+          os << row._values[i] << " | ";
+
+      return os;
+  }
+
+  std::ofstream &operator<<(std::ofstream &os, const Row &row)
+  {
     for (int i = 0; i != row._values.size(); i++)
-        os << row._values[i] << " | ";
-
+    {
+        os << row._values[i];
+        if (i < row._values.size() - 1)
+          os << ",";
+    }
     return os;
+  }
 }
