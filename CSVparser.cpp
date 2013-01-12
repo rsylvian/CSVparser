@@ -59,7 +59,7 @@ namespace csv {
      {
          bool quoted = false;
          int tokenStart = 0;
-         int i = 0;
+         unsigned int i = 0;
 
          Row *row = new Row(_header);
 
@@ -86,7 +86,7 @@ namespace csv {
 
   Row &Parser::getRow(unsigned int rowPosition) const
   {
-      if (rowPosition >= 0 && rowPosition < _content.size())
+      if (rowPosition < _content.size())
           return *(_content[rowPosition]);
       throw Error("can't return this row (doesn't exist)");
   }
@@ -120,7 +120,7 @@ namespace csv {
 
   bool Parser::deleteRow(unsigned int pos)
   {
-    if (pos >= 0 && pos < _content.size())
+    if (pos < _content.size())
     {
       delete *(_content.begin() + pos);
       _content.erase(_content.begin() + pos);
@@ -136,7 +136,7 @@ namespace csv {
     for (auto it = r.begin(); it != r.end(); it++)
       row->push(*it);
     
-    if (pos >= 0 && pos <= _content.size())
+    if (pos <= _content.size())
     {
       _content.insert(_content.begin() + pos, row);
       return true;
@@ -150,7 +150,7 @@ namespace csv {
      f.open(_file, std::ios::out | std::ios::trunc);
 
     // header
-    int i = 0;
+    unsigned int i = 0;
     for (auto it = _header.begin(); it != _header.end(); it++)
     {
       f << *it;
@@ -175,7 +175,7 @@ namespace csv {
 
   Row::~Row(void) {}
 
-  int Row::size(void) const
+  unsigned int Row::size(void) const
   {
     return _values.size();
   }
@@ -204,7 +204,7 @@ namespace csv {
 
   const std::string Row::operator[](unsigned int valuePosition) const
   {
-       if (valuePosition >= 0 && valuePosition < _values.size())
+       if (valuePosition < _values.size())
            return _values[valuePosition];
        throw Error("can't return this value (doesn't exist)");
   }
@@ -226,7 +226,7 @@ namespace csv {
 
   std::ostream &operator<<(std::ostream &os, const Row &row)
   {
-      for (int i = 0; i != row._values.size(); i++)
+      for (unsigned int i = 0; i != row._values.size(); i++)
           os << row._values[i] << " | ";
 
       return os;
@@ -234,7 +234,7 @@ namespace csv {
 
   std::ofstream &operator<<(std::ofstream &os, const Row &row)
   {
-    for (int i = 0; i != row._values.size(); i++)
+    for (unsigned int i = 0; i != row._values.size(); i++)
     {
         os << row._values[i];
         if (i < row._values.size() - 1)

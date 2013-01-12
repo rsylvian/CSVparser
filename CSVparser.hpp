@@ -26,7 +26,7 @@ namespace csv
     	    ~Row(void);
 
     	public:
-            int size(void) const;
+            unsigned int size(void) const;
             void push(const std::string &);
             bool set(const std::string &, const std::string &); 
 
