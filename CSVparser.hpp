@@ -6,6 +6,7 @@
 # include <vector>
 # include <list>
 # include <iostream>
+# include <sstream>
 
 namespace csv
 {
@@ -35,6 +36,24 @@ namespace csv
     		std::vector<std::string> _values;
 
         public:
+
+            template<typename T>
+            const T getValue(unsigned int pos) const
+            {
+                std::cout << pos << std::endl;
+                if (pos < _values.size())
+                {
+                    std::cout << _values[pos] << std::endl;
+                    T res;
+                    // std::string str = _values[pos];
+                    // std::cout << _values[pos] << std::endl;
+                    std::stringstream ss;
+                    ss << _values[pos];
+                    ss >> res;
+                    return res;
+                }
+                throw Error("can't return this value (doesn't exist)");
+            }
             const std::string operator[](unsigned int) const;
             const std::string operator[](const std::string &valueName) const;
             friend std::ostream& operator<<(std::ostream& os, const Row &row);
