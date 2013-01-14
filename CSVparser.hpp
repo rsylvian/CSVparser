@@ -5,7 +5,6 @@
 # include <string>
 # include <vector>
 # include <list>
-# include <iostream>
 # include <sstream>
 
 namespace csv
@@ -40,13 +39,9 @@ namespace csv
             template<typename T>
             const T getValue(unsigned int pos) const
             {
-                std::cout << pos << std::endl;
                 if (pos < _values.size())
                 {
-                    std::cout << _values[pos] << std::endl;
                     T res;
-                    // std::string str = _values[pos];
-                    // std::cout << _values[pos] << std::endl;
                     std::stringstream ss;
                     ss << _values[pos];
                     ss >> res;
