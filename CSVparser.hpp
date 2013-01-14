@@ -68,6 +68,7 @@ namespace csv
         unsigned int columnCount(void) const;
         std::vector<std::string> getHeader(void) const;
         const std::string getHeaderElement(unsigned int pos) const;
+        const std::string &getFileName(void) const;
 
     public:
         bool deleteRow(unsigned int row);

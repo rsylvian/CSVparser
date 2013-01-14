@@ -165,6 +165,11 @@ namespace csv {
       f << **it << std::endl;
     f.close();
   }
+
+  const std::string &Parser::getFileName(void) const
+  {
+      return _file;    
+  }
   
   /*
   ** ROW
