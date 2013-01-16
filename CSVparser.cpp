@@ -40,6 +40,9 @@ namespace csv {
             _originalFile.push_back(line);
         if (_originalFile.size() == 0)
           throw Error(std::string("No Data in pure content"));
+
+        parseHeader();
+        parseContent();
       }
   }
 
