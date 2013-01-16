@@ -5,30 +5,68 @@
 
 namespace csv {
 
-  Parser::Parser(const std::string &file, char sep)
-      : _file(file), _sep(sep)
-  {
-      std::ifstream ifile(file.c_str());
-      std::string line;
+  // Parser::Parser(const std::string &file, char sep)
+  //     : _file(file), _sep(sep)
+  // {
+  //     std::ifstream ifile(file.c_str());
+  //     std::string line;
 
-      if (ifile.is_open())
-      {
-          while (ifile.good())
-          {
-              getline(ifile, line);
-              if (line != "")
-                  _originalFile.push_back(line);
-          }
-          ifile.close();
+  //     if (ifile.is_open())
+  //     {
+  //         while (ifile.good())
+  //         {
+  //             getline(ifile, line);
+  //             if (line != "")
+  //                 _originalFile.push_back(line);
+  //         }
+  //         ifile.close();
 
-          if (_originalFile.size() == 0)
-            throw Error(std::string("No Data in ").append(file));
+  //         if (_originalFile.size() == 0)
+  //           throw Error(std::string("No Data in ").append(file));
           
-          parseHeader();
-          parseContent();
+  //         parseHeader();
+  //         parseContent();
+  //     }
+  //     else
+  //         throw Error(std::string("Failed to open ").append(file));
+  // }
+
+  Parser::Parser(const std::string &data, const DataType &type, char sep)
+    : _type(type), _sep(sep)
+  {
+      std::string line;
+      if (type == FILE)
+      {
+        _file = data;
+        std::ifstream ifile(_file.c_str());
+        if (ifile.is_open())
+        {
+            while (ifile.good())
+            {
+                getline(ifile, line);
+                if (line != "")
+                    _originalFile.push_back(line);
+            }
+            ifile.close();
+
+            if (_originalFile.size() == 0)
+              throw Error(std::string("No Data in ").append(_file));
+            
+            parseHeader();
+            parseContent();
+        }
+        else
+            throw Error(std::string("Failed to open ").append(_file));
       }
       else
-          throw Error(std::string("Failed to open ").append(file));
+      {
+        std::istringstream stream(data);
+        while (std::getline(stream, line))
+          if (line != "")
+            _originalFile.push_back(line);
+        if (_originalFile.size() == 0)
+          throw Error(std::string("No Data in pure content"));
+      }
   }
 
   Parser::~Parser(void)
@@ -146,24 +184,27 @@ namespace csv {
 
   void Parser::sync(void) const
   {
-    std::ofstream f;
-     f.open(_file, std::ios::out | std::ios::trunc);
-
-    // header
-    unsigned int i = 0;
-    for (auto it = _header.begin(); it != _header.end(); it++)
+    if (_type == DataType::FILE)
     {
-      f << *it;
-      if (i < _header.size() - 1)
-        f << ",";
-      else
-        f << std::endl;
-      i++;
+      std::ofstream f;
+      f.open(_file, std::ios::out | std::ios::trunc);
+
+      // header
+      unsigned int i = 0;
+      for (auto it = _header.begin(); it != _header.end(); it++)
+      {
+        f << *it;
+        if (i < _header.size() - 1)
+          f << ",";
+        else
+          f << std::endl;
+        i++;
+      }
+     
+      for (auto it = _content.begin(); it != _content.end(); it++)
+        f << **it << std::endl;
+      f.close();
     }
-   
-    for (auto it = _content.begin(); it != _content.end(); it++)
-      f << **it << std::endl;
-    f.close();
   }
 
   const std::string &Parser::getFileName(void) const

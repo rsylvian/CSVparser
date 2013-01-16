@@ -55,11 +55,17 @@ namespace csv
             friend std::ofstream& operator<<(std::ofstream& os, const Row &row);
     };
 
+    enum DataType {
+        FILE = 0,
+        PURE = 1
+    };
+
     class Parser
     {
 
     public:
-        Parser(const std::string &, char sep = ',');
+        // Parser(const std::string &, char sep = ',');
+        Parser(const std::string &, const DataType &type = FILE, char sep = ',');
         ~Parser(void);
 
     public:
@@ -80,7 +86,8 @@ namespace csv
     	void parseContent(void);
 
     private:
-        const std::string _file;
+        std::string _file;
+        const DataType _type;
         const char _sep;
         std::vector<std::string> _originalFile;
         std::vector<std::string> _header;
