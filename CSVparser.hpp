@@ -64,7 +64,6 @@ namespace csv
     {
 
     public:
-        // Parser(const std::string &, char sep = ',');
         Parser(const std::string &, const DataType &type = FILE, char sep = ',');
         ~Parser(void);
 

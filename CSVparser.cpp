@@ -5,32 +5,6 @@
 
 namespace csv {
 
-  // Parser::Parser(const std::string &file, char sep)
-  //     : _file(file), _sep(sep)
-  // {
-  //     std::ifstream ifile(file.c_str());
-  //     std::string line;
-
-  //     if (ifile.is_open())
-  //     {
-  //         while (ifile.good())
-  //         {
-  //             getline(ifile, line);
-  //             if (line != "")
-  //                 _originalFile.push_back(line);
-  //         }
-  //         ifile.close();
-
-  //         if (_originalFile.size() == 0)
-  //           throw Error(std::string("No Data in ").append(file));
-          
-  //         parseHeader();
-  //         parseContent();
-  //     }
-  //     else
-  //         throw Error(std::string("Failed to open ").append(file));
-  // }
-
   Parser::Parser(const std::string &data, const DataType &type, char sep)
     : _type(type), _sep(sep)
   {
