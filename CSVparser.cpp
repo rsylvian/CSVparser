@@ -9,7 +9,7 @@ namespace csv {
     : _type(type), _sep(sep)
   {
       std::string line;
-      if (type == FILE)
+      if (type == eFILE)
       {
         _file = data;
         std::ifstream ifile(_file.c_str());
@@ -161,7 +161,7 @@ namespace csv {
 
   void Parser::sync(void) const
   {
-    if (_type == DataType::FILE)
+    if (_type == DataType::eFILE)
     {
       std::ofstream f;
       f.open(_file, std::ios::out | std::ios::trunc);

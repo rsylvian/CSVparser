@@ -56,15 +56,15 @@ namespace csv
     };
 
     enum DataType {
-        FILE = 0,
-        PURE = 1
+        eFILE = 0,
+        ePURE = 1
     };
 
     class Parser
     {
 
     public:
-        Parser(const std::string &, const DataType &type = FILE, char sep = ',');
+        Parser(const std::string &, const DataType &type = eFILE, char sep = ',');
         ~Parser(void);
 
     public:
