@@ -1,7 +1,8 @@
+#include "CSVparser.hpp"
+
 #include <fstream>
 #include <sstream>
 #include <iomanip>
-#include "CSVparser.hpp"
 
 namespace csv {
 
@@ -12,13 +13,13 @@ namespace csv {
       if (type == eFILE)
       {
         _file = data;
-        std::ifstream ifile(_file.c_str());
+        std::ifstream ifile(_file);
         if (ifile.is_open())
         {
             while (ifile.good())
             {
                 getline(ifile, line);
-                if (line != "")
+                if (!line.empty())
                     _originalFile.push_back(line);
             }
             ifile.close();
@@ -36,7 +37,7 @@ namespace csv {
       {
         std::istringstream stream(data);
         while (std::getline(stream, line))
-          if (line != "")
+          if (!line.empty())
             _originalFile.push_back(line);
         if (_originalFile.size() == 0)
           throw Error(std::string("No Data in pure content"));
@@ -66,16 +67,16 @@ namespace csv {
      // skip header
      for (auto it = ++_originalFile.begin(); it != _originalFile.end(); it++)
      {
-         bool quoted = false;
-         int tokenStart = 0;
+         auto quoted = false;
+         auto tokenStart = 0;
 
-         Row *row = new Row(_header);
+         auto *row = new Row(_header);
 
          for (auto i = 0; i != it->length(); i++)
          {
               if (it->at(i) == '"')
                   quoted = ((quoted) ? (false) : (true));
-              else if (it->at(i) == ',' && !quoted)
+              else if (it->at(i) == _sep && !quoted)
               {
                   row->push(it->substr(tokenStart, i - tokenStart));
                   tokenStart = i + 1;
@@ -160,19 +161,19 @@ namespace csv {
       f.open(_file, std::ios::out | std::ios::trunc);
 
       // header
-      unsigned int i = 0;
+      auto i = 0;
       for (auto it = _header.begin(); it != _header.end(); it++)
       {
         f << *it;
         if (i < _header.size() - 1)
           f << ",";
         else
-          f << std::endl;
+          f << '\n';
         i++;
       }
      
       for (auto it = _content.begin(); it != _content.end(); it++)
-        f << **it << std::endl;
+        f << **it << '\n';
       f.close();
     }
   }
@@ -256,8 +257,4 @@ namespace csv {
     }
     return os;
   }
-}
-
-int main(){
-  return 0;
 }

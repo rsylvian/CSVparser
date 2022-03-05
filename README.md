@@ -11,8 +11,24 @@ CSV is a common, relatively simple file format that is widely supported by consu
 Compilation
 -----------
 
+***Compile as Executable***
+   
+It requires the main() function to be defined in CSVparser.cpp (or an 
+additional translation unit. See Usage in README for details).
 ```bash
-g++ CSVparser.cpp -std=c++0x
+$ g++ CSVparser.cpp -std=c++11
+```
+
+***Compile as Shared Library***
+
+The build process is managed by CMake.
+```
+# from the root directory of the source files
+$ mkdir build
+$ cd build
+$ cmake ..
+# the following command can be replaced by make
+$ cmake --build .
 ```
 
 Usage
@@ -28,8 +44,9 @@ Year,Make,Model
 ```
 
 ```c++
-#include <iostream>
 #include "CSVparser.hpp"
+
+#include <iostream>
 
 int main(int argc, char **argv)
 {
@@ -37,19 +54,19 @@ int main(int argc, char **argv)
     {
         csv::Parser file = csv::Parser("files/readme.csv");
 
-        std::cout << file[0][0] << std::endl; // display : 1997
-        std::cout << file[0] << std::endl; // display : 1997 | Ford | E350
+        std::cout << file[0][0] << '\n'; // display : 1997
+        std::cout << file[0] << '\n'; // display : 1997 | Ford | E350
 
-        std::cout << file[1]["Model"] << std::endl; // display : Cougar
+        std::cout << file[1]["Model"] << '\n'; // display : Cougar
 
-        std::cout << file.rowCount() << std::endl; // display : 2
-        std::cout << file.columnCount() << std::endl; // display : 3
+        std::cout << file.rowCount() << '\n'; // display : 2
+        std::cout << file.columnCount() << '\n'; // display : 3
 
-        std::cout << file.getHeaderElement(2) << std::endl; // display : Model
+        std::cout << file.getHeaderElement(2) << '\n'; // display : Model
     }
     catch (csv::Error &e)
     {
-        std::cerr << e.what() << std::endl;
+        std::cerr << e.what() << '\n';
     }
   	return 0;
 }
