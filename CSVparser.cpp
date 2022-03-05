@@ -93,29 +93,29 @@ namespace csv {
      }
   }
 
-  inline Row &Parser::getRow(unsigned int rowPosition) const
+  Row &Parser::getRow(unsigned int rowPosition) const
   {
       if (rowPosition < _content.size())
           return *(_content[rowPosition]);
       throw Error("can't return this row (doesn't exist)");
   }
 
-  inline Row &Parser::operator[](unsigned int rowPosition) const
+  Row &Parser::operator[](unsigned int rowPosition) const
   {
       return Parser::getRow(rowPosition);
   }
 
-  inline unsigned int Parser::rowCount(void) const
+  unsigned int Parser::rowCount(void) const
   {
       return _content.size();
   }
 
-  inline unsigned int Parser::columnCount(void) const
+  unsigned int Parser::columnCount(void) const
   {
       return _header.size();
   }
 
-  inline std::vector<std::string> Parser::getHeader(void) const
+  std::vector<std::string> Parser::getHeader(void) const
   {
       return _header;
   }
@@ -178,7 +178,7 @@ namespace csv {
     }
   }
 
-  inline const std::string &Parser::getFileName(void) const
+  const std::string &Parser::getFileName(void) const
   {
       return _file;    
   }
@@ -192,7 +192,7 @@ namespace csv {
 
   Row::~Row(void) {}
 
-  inline unsigned int Row::size(void) const
+  unsigned int Row::size(void) const
   {
     return _values.size();
   }
@@ -218,7 +218,7 @@ namespace csv {
     return false;
   }
 
-  inline const std::string Row::operator[](unsigned int valuePosition) const
+  const std::string Row::operator[](unsigned int valuePosition) const
   {
        if (valuePosition < _values.size())
            return _values[valuePosition];
