@@ -48,9 +48,7 @@ namespace csv {
 
   Parser::~Parser(void)
   {
-     std::vector<Row *>::iterator it;
-
-     for (it = _content.begin(); it != _content.end(); it++)
+     for (auto it = _content.begin(); it != _content.end(); it++)
           delete *it;
   }
 
@@ -65,20 +63,15 @@ namespace csv {
 
   void Parser::parseContent(void)
   {
-     std::vector<std::string>::iterator it;
-     
-     it = _originalFile.begin();
-     it++; // skip header
-
-     for (; it != _originalFile.end(); it++)
+     // skip header
+     for (auto it = ++_originalFile.begin(); it != _originalFile.end(); it++)
      {
          bool quoted = false;
          int tokenStart = 0;
-         unsigned int i = 0;
 
          Row *row = new Row(_header);
 
-         for (; i != it->length(); i++)
+         for (auto i = 0; i != it->length(); i++)
          {
               if (it->at(i) == '"')
                   quoted = ((quoted) ? (false) : (true));
@@ -210,10 +203,9 @@ namespace csv {
 
   bool Row::set(const std::string &key, const std::string &value) 
   {
-    std::vector<std::string>::const_iterator it;
     int pos = 0;
 
-    for (it = _header.begin(); it != _header.end(); it++)
+    for (auto it = _header.begin(); it != _header.end(); it++)
     {
         if (key == *it)
         {
@@ -234,10 +226,9 @@ namespace csv {
 
   const std::string Row::operator[](const std::string &key) const
   {
-      std::vector<std::string>::const_iterator it;
       int pos = 0;
 
-      for (it = _header.begin(); it != _header.end(); it++)
+      for (auto it = _header.begin(); it != _header.end(); it++)
       {
           if (key == *it)
               return _values[pos];
@@ -249,7 +240,7 @@ namespace csv {
 
   std::ostream &operator<<(std::ostream &os, const Row &row)
   {
-      for (unsigned int i = 0; i != row._values.size(); i++)
+      for (auto i = 0; i != row._values.size(); i++)
           os << row._values[i] << " | ";
 
       return os;
@@ -257,7 +248,7 @@ namespace csv {
 
   std::ofstream &operator<<(std::ofstream &os, const Row &row)
   {
-    for (unsigned int i = 0; i != row._values.size(); i++)
+    for (auto i = 0; i != row._values.size(); i++)
     {
         os << row._values[i];
         if (i < row._values.size() - 1)
@@ -265,4 +256,8 @@ namespace csv {
     }
     return os;
   }
+}
+
+int main(){
+  return 0;
 }
