@@ -93,29 +93,29 @@ namespace csv {
      }
   }
 
-  Row &Parser::getRow(unsigned int rowPosition) const
+  inline Row &Parser::getRow(unsigned int rowPosition) const
   {
       if (rowPosition < _content.size())
           return *(_content[rowPosition]);
       throw Error("can't return this row (doesn't exist)");
   }
 
-  Row &Parser::operator[](unsigned int rowPosition) const
+  inline Row &Parser::operator[](unsigned int rowPosition) const
   {
       return Parser::getRow(rowPosition);
   }
 
-  unsigned int Parser::rowCount(void) const
+  inline unsigned int Parser::rowCount(void) const
   {
       return _content.size();
   }
 
-  unsigned int Parser::columnCount(void) const
+  inline unsigned int Parser::columnCount(void) const
   {
       return _header.size();
   }
 
-  std::vector<std::string> Parser::getHeader(void) const
+  inline std::vector<std::string> Parser::getHeader(void) const
   {
       return _header;
   }
@@ -140,7 +140,7 @@ namespace csv {
 
   bool Parser::addRow(unsigned int pos, const std::vector<std::string> &r)
   {
-    Row *row = new Row(_header);
+    auto *row = new Row(_header);
 
     for (auto it = r.begin(); it != r.end(); it++)
       row->push(*it);
@@ -178,7 +178,7 @@ namespace csv {
     }
   }
 
-  const std::string &Parser::getFileName(void) const
+  inline const std::string &Parser::getFileName(void) const
   {
       return _file;    
   }
@@ -192,7 +192,7 @@ namespace csv {
 
   Row::~Row(void) {}
 
-  unsigned int Row::size(void) const
+  inline unsigned int Row::size(void) const
   {
     return _values.size();
   }
@@ -204,7 +204,7 @@ namespace csv {
 
   bool Row::set(const std::string &key, const std::string &value) 
   {
-    int pos = 0;
+    auto pos = 0;
 
     for (auto it = _header.begin(); it != _header.end(); it++)
     {
@@ -218,7 +218,7 @@ namespace csv {
     return false;
   }
 
-  const std::string Row::operator[](unsigned int valuePosition) const
+  inline const std::string Row::operator[](unsigned int valuePosition) const
   {
        if (valuePosition < _values.size())
            return _values[valuePosition];
@@ -227,7 +227,7 @@ namespace csv {
 
   const std::string Row::operator[](const std::string &key) const
   {
-      int pos = 0;
+      auto pos = 0;
 
       for (auto it = _header.begin(); it != _header.end(); it++)
       {
