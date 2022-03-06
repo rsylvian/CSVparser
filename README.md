@@ -50,7 +50,7 @@ Year,Make,Model
 
 int main(int argc, char **argv)
 {
-	try
+    try
     {
         csv::Parser file = csv::Parser("files/readme.csv");
 
@@ -68,6 +68,6 @@ int main(int argc, char **argv)
     {
         std::cerr << e.what() << '\n';
     }
-  	return 0;
+    return 0;
 }
 ```
