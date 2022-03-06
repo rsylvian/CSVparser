@@ -12,14 +12,17 @@ Compilation
 -----------
 
 ***Compile as Executable***
-   
-It requires the main() function to be defined in CSVparser.cpp (or an 
-additional translation unit. See Usage in README for details).
+
+It requires the main() function (see Usage in README as an exmaple) to be defined in either CSVparser.cpp or an additional translation unit, say, test.cpp.
 ```bash
+# choose one from the following two
+# if main() is defined in CSVparser.cpp
 $ g++ CSVparser.cpp -std=c++11
+# if main() is defined in test.cpp
+$ g++ CSVparser.cpp test.cpp -std=c++11
 ```
 
-***Compile as Shared Library***
+***Compile as Library***
 
 The build process is managed by CMake.
 ```
@@ -48,7 +51,7 @@ Year,Make,Model
 
 #include <iostream>
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     try
     {
@@ -64,10 +67,11 @@ int main(int argc, char **argv)
 
         std::cout << file.getHeaderElement(2) << '\n'; // display : Model
     }
-    catch (csv::Error &e)
+    catch (csv::Error& e)
     {
         std::cerr << e.what() << '\n';
     }
+
     return 0;
 }
 ```

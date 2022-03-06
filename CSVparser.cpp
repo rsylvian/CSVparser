@@ -82,7 +82,7 @@ namespace csv
             auto quoted = false;
             auto tokenStart = 0;
 
-            auto *row = new Row(_header);
+            auto* row = new Row(_header);
 
             for (auto i = 0; i != it->length(); ++i)
             {
@@ -143,7 +143,7 @@ namespace csv
 
     bool Parser::addRow(unsigned int pos, const vector<string>& r)
     {
-        auto *row = new Row(_header);
+        auto* row = new Row(_header);
 
         for (auto it = r.begin(); it != r.end(); ++it)
             row->push(*it);

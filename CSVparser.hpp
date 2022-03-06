@@ -86,7 +86,7 @@ namespace csv
         const char _sep;
         std::vector<std::string> _originalFile;
         std::vector<std::string> _header;
-        std::vector<Row *> _content;
+        std::vector<Row*> _content;
 
     public:
         Row& operator[](unsigned int row) const;
