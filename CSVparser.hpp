@@ -12,20 +12,20 @@ namespace csv
     class Error : public std::runtime_error
     {
     public:
-        Error(const std::string &msg)
+        Error(const std::string& msg)
             : std::runtime_error(std::string("CSVparser : ").append(msg)) {}
     };
 
     class Row
     {
     public:
-        Row(const std::vector<std::string> &);
-        ~Row(void);
+        Row(const std::vector<std::string>&);
+        ~Row();
 
     public:
-        unsigned int size(void) const;
-        void push(const std::string &);
-        bool set(const std::string &, const std::string &);
+        unsigned int size() const;
+        void push(const std::string&);
+        bool set(const std::string&, const std::string&);
 
     private:
         const std::vector<std::string> _header;
@@ -46,9 +46,9 @@ namespace csv
             throw Error("can't return this value (doesn't exist)");
         }
         const std::string operator[](unsigned int) const;
-        const std::string operator[](const std::string &valueName) const;
-        friend std::ostream &operator<<(std::ostream &os, const Row &row);
-        friend std::ofstream &operator<<(std::ofstream &os, const Row &row);
+        const std::string operator[](const std::string& valueName) const;
+        friend std::ostream& operator<<(std::ostream& os, const Row& row);
+        friend std::ofstream& operator<<(std::ofstream& os, const Row& row);
     };
 
     enum DataType
@@ -60,25 +60,25 @@ namespace csv
     class Parser
     {
     public:
-        Parser(const std::string &, const DataType &type = eFILE, char sep = ',');
-        ~Parser(void);
+        Parser(const std::string&, const DataType& type = eFILE, char sep = ',');
+        ~Parser();
 
     public:
-        Row &getRow(unsigned int row) const;
-        unsigned int rowCount(void) const;
-        unsigned int columnCount(void) const;
-        std::vector<std::string> getHeader(void) const;
+        Row& getRow(unsigned int row) const;
+        unsigned int rowCount() const;
+        unsigned int columnCount() const;
+        std::vector<std::string> getHeader() const;
         const std::string getHeaderElement(unsigned int pos) const;
-        const std::string &getFileName(void) const;
+        const std::string& getFileName() const;
 
     public:
         bool deleteRow(unsigned int row);
-        bool addRow(unsigned int pos, const std::vector<std::string> &);
-        void sync(void) const;
+        bool addRow(unsigned int pos, const std::vector<std::string>&);
+        void sync() const;
 
     protected:
-        void parseHeader(void);
-        void parseContent(void);
+        void parseHeader();
+        void parseContent();
 
     private:
         std::string _file;
@@ -89,7 +89,7 @@ namespace csv
         std::vector<Row *> _content;
 
     public:
-        Row &operator[](unsigned int row) const;
+        Row& operator[](unsigned int row) const;
     };
 } // namespace csv
 
