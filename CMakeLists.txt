@@ -1,6 +1,5 @@
 project(csv)
 
-add_library(csv-parser
-  CSVparser.cpp
-  CSVparser.hpp
-)
+set(CMAKE_CXX_STANDARD 11)
+
+add_library(csv-parser CSVparser.cpp)

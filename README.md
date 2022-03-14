@@ -11,8 +11,27 @@ CSV is a common, relatively simple file format that is widely supported by consu
 Compilation
 -----------
 
+***Compile as Executable***
+
+It requires the main() function (see Usage in README as an exmaple) to be defined in either CSVparser.cpp or an additional translation unit, say, test.cpp.
 ```bash
-g++ CSVparser.cpp -std=c++0x
+# choose one from the following two
+# if main() is defined in CSVparser.cpp
+$ g++ CSVparser.cpp -std=c++11
+# if main() is defined in test.cpp
+$ g++ CSVparser.cpp test.cpp -std=c++11
+```
+
+***Compile as Library***
+
+The build process is managed by CMake.
+```
+# from the root directory of the source files
+$ mkdir build
+$ cd build
+$ cmake ..
+# the following command can be replaced by make
+$ cmake --build .
 ```
 
 Usage
@@ -28,29 +47,31 @@ Year,Make,Model
 ```
 
 ```c++
-#include <iostream>
 #include "CSVparser.hpp"
 
-int main(int argc, char **argv)
+#include <iostream>
+
+int main(int argc, char** argv)
 {
-	try
+    try
     {
         csv::Parser file = csv::Parser("files/readme.csv");
 
-        std::cout << file[0][0] << std::endl; // display : 1997
-        std::cout << file[0] << std::endl; // display : 1997 | Ford | E350
+        std::cout << file[0][0] << '\n'; // display : 1997
+        std::cout << file[0] << '\n'; // display : 1997 | Ford | E350
 
-        std::cout << file[1]["Model"] << std::endl; // display : Cougar
+        std::cout << file[1]["Model"] << '\n'; // display : Cougar
 
-        std::cout << file.rowCount() << std::endl; // display : 2
-        std::cout << file.columnCount() << std::endl; // display : 3
+        std::cout << file.rowCount() << '\n'; // display : 2
+        std::cout << file.columnCount() << '\n'; // display : 3
 
-        std::cout << file.getHeaderElement(2) << std::endl; // display : Model
+        std::cout << file.getHeaderElement(2) << '\n'; // display : Model
     }
-    catch (csv::Error &e)
+    catch (csv::Error& e)
     {
-        std::cerr << e.what() << std::endl;
+        std::cerr << e.what() << '\n';
     }
-  	return 0;
+
+    return 0;
 }
 ```
